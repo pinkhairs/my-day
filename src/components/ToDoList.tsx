@@ -1,8 +1,14 @@
 import ToDo from '@/components/ToDo'
 import { useState, useEffect } from 'react'
 
-function ToDoList() {
-  const [todos, setTodos] = useState<string[]>(['Write to ma']);
+interface ToDoListProps {
+  todos: string[];
+  setTodos: React.Dispatch<React.SetStateAction<string[]>>;
+  onPlanDay: () => void;
+  isLoading: boolean;
+}
+
+function ToDoList({ todos, setTodos, onPlanDay, isLoading }: ToDoListProps) {
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const [validList, setValidList] = useState<boolean | null>(null);
 
@@ -33,7 +39,6 @@ function ToDoList() {
     setTodos(prev => {
       const updated = [...prev];
       updated[index] = newValue;
-
       return updated;
     });
   };
@@ -81,7 +86,14 @@ function ToDoList() {
       <div className="flex justify-center lg:hidden">
         <hr className="w-16 text-gray-300" />
       </div>
-      <button disabled={!validList} type="button" className="lg:fixed disabled:text-gray-700 disabled:bg-gray-100 text-lg w-full bottom-8 lg:w-[calc(50%-48px)] cursor-pointer bg-green-600 rounded-xl px-6 py-3.5 text-white font-bold">Plan My Day</button>
+      <button 
+        disabled={!validList || isLoading} 
+        type="button" 
+        onClick={onPlanDay}
+        className="disabled:text-gray-700 disabled:bg-gray-100 text-lg w-full bottom-8 cursor-pointer bg-green-600 rounded-xl px-6 py-3.5 text-white font-bold"
+      >
+        {isLoading ? 'Planning...' : 'Plan My Day'}
+      </button>
     </div>
   )
 }
