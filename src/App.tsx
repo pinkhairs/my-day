@@ -65,8 +65,10 @@ function App() {
   return (
     <div className="h-full min-h-dvh flex flex-col gap-8 lg:grid lg:grid-cols-2">
       <div className="flex flex-col gap-4 pt-8 lg:py-8 px-8 lg:px-0">
+        <div className="flex flex-col gap-2">
         <h1 className="font-bold text-4xl">MyDay</h1>
-        <h2 className="text-lg">What do you want to accomplish today?</h2>
+          <h2 className="text-lg">What do you want to accomplish today? We'll create an ideal schedule.</h2>
+        </div>
         <ToDoList 
           todos={todos}
           setTodos={setTodos}
@@ -107,18 +109,14 @@ function App() {
                   <div className="text-center italic">{planResult[0].daySummary}</div>
                   {planResult[1].map((item: TodoItem, index: number) => (
                       // Check if item is an object (a schedule step), otherwise output it directly
-                      typeof item === 'object' && item.todoName !== null ? (
-                        <div key={index} className="mb-4">
-                          <div className="text-lg">
-                            <strong>{item.startTime}:</strong> {item.todoName}
-                          </div>
-                          <div className="text-gray-600">
-                            {item.explanationOfOrder}
-                          </div>
+                      <div key={index} className="mb-4">
+                        <div className="text-lg">
+                          <strong>{item.startTime}:</strong> {item.todoName}
                         </div>
-                      ) : (
-                        <div key={index}>{item}</div>
-                      )
+                        <div className="text-gray-600">
+                          {item.explanationOfOrder}
+                        </div>
+                      </div>
                     ))}
                 </div>
               </div>
