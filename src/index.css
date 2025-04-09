@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+.autogrow-textarea {
+  max-height: 6rem; /* 4 lines at 1.5 line-height */
+  overflow: auto;
+  &::after {
+    content: attr(data-value) " ";
+    @apply invisible whitespace-pre-wrap;
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+  }
+  textarea {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+    resize: none;
+  }
+}
