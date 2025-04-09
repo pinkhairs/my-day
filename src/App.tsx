@@ -1,5 +1,6 @@
 import ToDoList from '@/components/ToDoList'
 import { useState } from 'react';
+import axios from 'axios'
 
 interface PlanHeader {
   relevantEmoji: string;
@@ -36,27 +37,36 @@ function App() {
     }
     
     try {
-      const res = await fetch('/.netlify/functions/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ todos: validTodos }),
-      });
+      const response = await axios.post('/.netlify/functions/chat', 
+        { todos: validTodos },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          timeout: 30000, // 30 seconds timeout
+        }
+      );
       
-      if (!res.ok) {
-        throw new Error(`Server responded with ${res.status}`);
-      }
-      
-      const data = await res.json();
-
       // Get the content from the response and parse it as JSON
-      const resultContent = data.choices[0].message.content;
+      const resultContent = response.data.choices[0].message.content;
       const parsedResult = JSON.parse(resultContent);
       setPlanResult(parsedResult);
     } catch (err) {
       console.error('Error calling chat function:', err);
-      setError('Failed to generate your plan. Please try again.');
+      
+      if (axios.isAxiosError(err)) {
+        if (err.code === 'ECONNABORTED') {
+          setError('Request timed out. Please try again.');
+        } else if (err.response) {
+          setError(`Server responded with ${err.response.status}`);
+        } else if (err.request) {
+          setError('No response received from server. Please check your connection.');
+        } else {
+          setError('Failed to generate your plan. Please try again.');
+        }
+      } else {
+        setError('Failed to generate your plan. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
